@@ -1,6 +1,7 @@
 import sys
 import sqlite3
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QPushButton, QLabel, QLineEdit, QWidget, QVBoxLayout
+from PyQt5.QtGui import QPalette, QColor
 
 class LoginApp(QMainWindow):
     def __init__(self):
@@ -11,6 +12,10 @@ class LoginApp(QMainWindow):
     def initUI(self):
         self.setWindowTitle("Login System")
         self.setGeometry(100, 100, 300, 200)
+
+        palette = self.palette()
+        palette.setColor(QPalette.Window, QColor(0,128,0))  # Light green background
+        self.setPalette(palette)
 
         layout = QVBoxLayout()
         
@@ -26,14 +31,17 @@ class LoginApp(QMainWindow):
         layout.addWidget(self.input_password)
 
         self.button_login = QPushButton("Login", self)
+        self.button_login.setStyleSheet("background-color: lightgreen;")
         self.button_login.clicked.connect(self.login)
         layout.addWidget(self.button_login)
 
         self.button_signup = QPushButton("Sign Up", self)
+        self.button_signup.setStyleSheet("background-color: lightgreen;")
         self.button_signup.clicked.connect(self.open_signup)
         layout.addWidget(self.button_signup)
 
         self.button_reset_password = QPushButton("Forgot Password?", self)
+        self.button_reset_password.setStyleSheet("background-color: lightgreen;")
         self.button_reset_password.clicked.connect(self.open_password_reset)
         layout.addWidget(self.button_reset_password)
 
@@ -42,6 +50,7 @@ class LoginApp(QMainWindow):
         self.setCentralWidget(container)
 
     def create_database(self):
+        """Creates a database and user table if it doesn't exist."""
         conn = sqlite3.connect("users.db")
         cursor = conn.cursor()
         cursor.execute("""
@@ -57,6 +66,7 @@ class LoginApp(QMainWindow):
         conn.close()
 
     def login(self):
+        """Handles user login by checking database credentials."""
         username = self.input_username.text()
         password = self.input_password.text()
         
@@ -72,10 +82,12 @@ class LoginApp(QMainWindow):
             QMessageBox.warning(self, "Login Failed", "Invalid username or password.")
 
     def open_signup(self):
+        """Opens the sign-up window."""
         self.signup_window = SignupApp()
         self.signup_window.show()
 
     def open_password_reset(self):
+        """Opens the password reset window."""
         self.reset_window = PasswordResetApp()
         self.reset_window.show()
 
@@ -87,6 +99,10 @@ class PasswordResetApp(QMainWindow):
     def initUI(self):
         self.setWindowTitle("Reset Password")
         self.setGeometry(150, 150, 300, 200)
+
+        palette = self.palette()
+        palette.setColor(QPalette.Window, QColor(144, 238, 144))  # Light green background
+        self.setPalette(palette)
 
         layout = QVBoxLayout()
         
@@ -102,6 +118,7 @@ class PasswordResetApp(QMainWindow):
         layout.addWidget(self.input_new_password)
         
         self.button_reset = QPushButton("Reset Password", self)
+        self.button_reset.setStyleSheet("background-color: lightgreen;")
         self.button_reset.clicked.connect(self.reset_password)
         layout.addWidget(self.button_reset)
 
@@ -110,6 +127,7 @@ class PasswordResetApp(QMainWindow):
         self.setCentralWidget(container)
 
     def reset_password(self):
+        """Handles password reset functionality."""
         username = self.input_username.text()
         new_password = self.input_new_password.text()
 
@@ -122,7 +140,9 @@ class PasswordResetApp(QMainWindow):
         QMessageBox.information(self, "Password Reset", "Your password has been updated.")
         self.close()
 
+# Test Methods
 def test_password_reset():
+    """Tests password reset functionality."""
     app = QApplication(sys.argv)
     reset_app = PasswordResetApp()
     reset_app.input_username.setText("testuser")
