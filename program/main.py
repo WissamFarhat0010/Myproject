@@ -3,7 +3,11 @@ from PyQt5.QtWidgets import QApplication
 from controller import FocusMindApp
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    window = FocusMindApp()
-    window.show()
-    sys.exit(app.exec_())
+    try:
+        app = QApplication(sys.argv)
+        window = FocusMindApp()
+        window.show()
+        sys.exit(app.exec_())
+    except Exception as e:
+        print(f"Application error: {e}")
+        
