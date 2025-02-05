@@ -14,7 +14,7 @@ class LoginApp(QMainWindow):
         self.setGeometry(100, 100, 300, 200)
 
         palette = self.palette()
-        palette.setColor(QPalette.Window, QColor(0,128,0))  # Light green background
+        palette.setColor(QPalette.Window, QColor(0,128,0)) 
         self.setPalette(palette)
 
         layout = QVBoxLayout()
@@ -50,7 +50,6 @@ class LoginApp(QMainWindow):
         self.setCentralWidget(container)
 
     def create_database(self):
-        """Creates a database and user table if it doesn't exist."""
         conn = sqlite3.connect("users.db")
         cursor = conn.cursor()
         cursor.execute("""
@@ -66,7 +65,6 @@ class LoginApp(QMainWindow):
         conn.close()
 
     def login(self):
-        """Handles user login by checking database credentials."""
         username = self.input_username.text()
         password = self.input_password.text()
         
@@ -82,12 +80,10 @@ class LoginApp(QMainWindow):
             QMessageBox.warning(self, "Login Failed", "Invalid username or password.")
 
     def open_signup(self):
-        """Opens the sign-up window."""
         self.signup_window = SignupApp()
         self.signup_window.show()
 
     def open_password_reset(self):
-        """Opens the password reset window."""
         self.reset_window = PasswordResetApp()
         self.reset_window.show()
 
@@ -101,7 +97,7 @@ class PasswordResetApp(QMainWindow):
         self.setGeometry(150, 150, 300, 200)
 
         palette = self.palette()
-        palette.setColor(QPalette.Window, QColor(144, 238, 144))  # Light green background
+        palette.setColor(QPalette.Window, QColor(144, 238, 144))  
         self.setPalette(palette)
 
         layout = QVBoxLayout()
@@ -127,7 +123,6 @@ class PasswordResetApp(QMainWindow):
         self.setCentralWidget(container)
 
     def reset_password(self):
-        """Handles password reset functionality."""
         username = self.input_username.text()
         new_password = self.input_new_password.text()
 
@@ -140,9 +135,7 @@ class PasswordResetApp(QMainWindow):
         QMessageBox.information(self, "Password Reset", "Your password has been updated.")
         self.close()
 
-# Test Methods
 def test_password_reset():
-    """Tests password reset functionality."""
     app = QApplication(sys.argv)
     reset_app = PasswordResetApp()
     reset_app.input_username.setText("testuser")
