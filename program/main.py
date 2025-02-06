@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication
-from controller import FocusMindApp
+from log import FocusMindApp
 
 if __name__ == '__main__':
     try:
