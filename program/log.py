@@ -3,6 +3,7 @@ import sqlite3
 from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QPushButton, QLabel, QLineEdit, QWidget, QVBoxLayout
 from PyQt5.QtGui import QPalette, QColor
 
+
 class LoginApp(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -87,6 +88,7 @@ class LoginApp(QMainWindow):
         self.reset_window = PasswordResetApp()
         self.reset_window.show()
 
+
 class PasswordResetApp(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -134,6 +136,64 @@ class PasswordResetApp(QMainWindow):
 
         QMessageBox.information(self, "Password Reset", "Your password has been updated.")
         self.close()
+
+
+class SignupApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.initUI()
+
+    def initUI(self):
+        self.setWindowTitle("Sign Up")
+        self.setGeometry(150, 150, 300, 200)
+
+        layout = QVBoxLayout()
+
+        self.label_username = QLabel("Username:")
+        layout.addWidget(self.label_username)
+        self.input_username = QLineEdit(self)
+        layout.addWidget(self.input_username)
+
+        self.label_password = QLabel("Password:")
+        layout.addWidget(self.label_password)
+        self.input_password = QLineEdit(self)
+        self.input_password.setEchoMode(QLineEdit.Password)
+        layout.addWidget(self.input_password)
+
+        self.label_email = QLabel("Email:")
+        layout.addWidget(self.label_email)
+        self.input_email = QLineEdit(self)
+        layout.addWidget(self.input_email)
+
+        self.label_full_name = QLabel("Full Name:")
+        layout.addWidget(self.label_full_name)
+        self.input_full_name = QLineEdit(self)
+        layout.addWidget(self.input_full_name)
+
+        self.button_signup = QPushButton("Sign Up", self)
+        self.button_signup.clicked.connect(self.signup)
+        layout.addWidget(self.button_signup)
+
+        container = QWidget()
+        container.setLayout(layout)
+        self.setCentralWidget(container)
+
+    def signup(self):
+        username = self.input_username.text()
+        password = self.input_password.text()
+        email = self.input_email.text()
+        full_name = self.input_full_name.text()
+
+        conn = sqlite3.connect("users.db")
+        cursor = conn.cursor()
+        cursor.execute("INSERT INTO users (username, password, email, full_name) VALUES (?, ?, ?, ?)",
+                       (username, password, email, full_name))
+        conn.commit()
+        conn.close()
+
+        QMessageBox.information(self, "Sign Up", "User registered successfully!")
+        self.close()
+
 
 def test_password_reset():
     app = QApplication(sys.argv)
