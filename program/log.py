@@ -1,9 +1,11 @@
 import sys
+import os
 import sqlite3
-from PyQt5.QtWidgets import QApplication, QMainWindow, QMessageBox, QPushButton, QLabel, QLineEdit, QWidget, QVBoxLayout
-from PyQt5.QtGui import QPalette, QColor
+from PyQt5 import uic
+from PyQt5.QtCore import *
 
-
+from PyQt5.QtWidgets import * #QApplication, QMainWindow, QMessageBox, QPushButton, QLabel, QLineEdit, QWidget, QVBoxLayout
+from PyQt5.QtGui import * #QPalette, QColor
 class LoginApp(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -15,9 +17,8 @@ class LoginApp(QMainWindow):
         self.setGeometry(100, 100, 300, 200)
 
         palette = self.palette()
-        palette.setColor(QPalette.Window, QColor(0,128,0)) 
+        palette.setColor(QPalette.Window, QColor(0,128,0))
         self.setPalette(palette)
-
         layout = QVBoxLayout()
         
         self.label_username = QLabel("Username:")
@@ -77,8 +78,12 @@ class LoginApp(QMainWindow):
 
         if user:
             QMessageBox.information(self, "Login Success", "Welcome!")
+            #Feelings page (Emojies) will be open here
+            self.feelings = FeelApp()
+            self.feelings.show()
         else:
             QMessageBox.warning(self, "Login Failed", "Invalid username or password.")
+
 
     def open_signup(self):
         self.signup_window = SignupApp()
@@ -99,7 +104,7 @@ class PasswordResetApp(QMainWindow):
         self.setGeometry(150, 150, 300, 200)
 
         palette = self.palette()
-        palette.setColor(QPalette.Window, QColor(144, 238, 144))  
+        palette.setColor(QPalette.Window, QColor(144, 238, 144))
         self.setPalette(palette)
 
         layout = QVBoxLayout()
@@ -186,8 +191,7 @@ class SignupApp(QMainWindow):
 
         conn = sqlite3.connect("users.db")
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO users (username, password, email, full_name) VALUES (?, ?, ?, ?)",
-                       (username, password, email, full_name))
+        cursor.execute("INSERT INTO users (username, password, email, full_name) VALUES (?, ?, ?, ?)", (username, password, email, full_name))
         conn.commit()
         conn.close()
 
@@ -202,6 +206,133 @@ def test_password_reset():
     reset_app.input_new_password.setText("newpassword123")
     reset_app.reset_password()
     print("Password reset test completed.")
+
+
+class FeelApp(QMainWindow):
+        
+    def __init__(self):
+        super().__init__()
+
+        # Direct path to feelings.ui file inside the program.
+        ui_file = os.path.join(os.path.dirname(__file__), "feelings.ui")
+        
+        # Ensure the UI file exists before loading
+        if not os.path.exists(ui_file):
+            QMessageBox.critical(self, "Error", f"UI file not found: {ui_file}")
+            sys.exit(1)
+
+        print(f"Loading UI from: {ui_file}")  # Debugging print statement
+        uic.loadUi(ui_file, self)
+
+    
+
+
+        # Initialize UI and set up style
+        #self.initUI()
+        self.create_database()
+
+        self.setStyleSheet("""
+    
+            QMainWindow {
+                background-color: #D8BFD8; /* Light gray background */
+                background-repeat: repeat;
+                background-position: center;
+            }
+        
+            QPushButton {
+                background: none; /* Removes background */
+                border: none; /* Removes border */
+            }
+
+            QPushButton::icon {
+                width: 126px; /* Adjust icon size */
+                height: 126px;
+            }
+
+            QLabel {
+                font-size: 16px;
+                font-weight: bold;
+                color: #333; /* Dark gray text */
+                text-align: center;
+            }
+        """)
+
+        # Connect emoji buttons to their functions
+        self.setup_connections()
+
+        # Define exercises for each emotion
+        self.exercises = {
+            "Happy": "Practice gratitude: Write down three things you are grateful for today.",
+            "Neutral": "Take a mindful walk: Observe your surroundings and focus on your breathing.",
+            "Sad": "Journaling: Write down your thoughts and emotions freely for 10 minutes.",
+            "Relaxed": "Deep breathing: Inhale for 4 seconds, hold for 4, exhale for 4.",
+            "Anxious": "Progressive muscle relaxation: Tense and relax each muscle group slowly.",
+            "Stressed": "5-minute meditation: Close your eyes and focus on your breath."
+        }
+
+        # Start at the emotion selection page
+        self.stackedWidget.setCurrentIndex(0)
+
+    def setup_connections(self):
+        """Connect buttons to the corresponding functions."""
+        try:
+            # Set emojis as icons for buttons using os.path.join to form the correct path
+            self.btnHappy.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "images", "happy.png")))
+            self.btnNeutral.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "images", "neutral.png")))
+            self.btnSad.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "images", "sad.png")))
+            self.btnRelaxed.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "images", "relaxed.png")))
+            self.btnAnxious.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "images", "anxious.png")))
+            self.btnStressed.setIcon(QIcon(os.path.join(os.path.dirname(__file__), "images", "stressed.png")))
+
+            # Optionally set the icon size
+            self.btnHappy.setIconSize(QSize(126, 126))
+            self.btnNeutral.setIconSize(QSize(126, 126))
+            self.btnSad.setIconSize(QSize(126, 126))
+            self.btnRelaxed.setIconSize(QSize(126, 126))
+            self.btnAnxious.setIconSize(QSize(126, 126))
+            self.btnStressed.setIconSize(QSize(126, 126))
+
+            # Connect buttons to the respective methods
+            self.btnHappy.clicked.connect(lambda: self.show_exercise("Happy"))
+            self.btnNeutral.clicked.connect(lambda: self.show_exercise("Neutral"))
+            self.btnSad.clicked.connect(lambda: self.show_exercise("Sad"))
+            self.btnRelaxed.clicked.connect(lambda: self.show_exercise("Relaxed"))
+            self.btnAnxious.clicked.connect(lambda: self.show_exercise("Anxious"))
+            self.btnStressed.clicked.connect(lambda: self.show_exercise("Stressed"))
+            self.pushButton.clicked.connect(self.go_back)  # Back button
+        except AttributeError:
+            QMessageBox.critical(self, "Error", "UI elements not found. Check the UI file.")
+
+    def show_exercise(self, emotion):
+        """Switch to the exercise page and display the corresponding exercise."""
+        self.textEdit.setText(self.exercises.get(emotion, "Please select an emotion."))
+        self.stackedWidget.setCurrentIndex(1)  # Switch to exercise page
+
+    def go_back(self):
+        """Go back to the emotion selection page."""
+        self.stackedWidget.setCurrentIndex(0)
+
+    #def open_feelings(self):
+        #self.feelings_window = FeelApp()
+        #self.feelings_window.show()
+
+
+    # connect interface to database...
+    def create_database(self):
+        """Create the database for FeelApp if necessary."""
+        conn = sqlite3.connect("feelings.db")
+        cursor = conn.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS feelings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            emotion TEXT NOT NULL,
+            exercise TEXT NOT NULL
+        )
+        """)
+        conn.commit()
+        conn.close()
+
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
