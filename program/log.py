@@ -6,6 +6,7 @@ from PyQt5.QtCore import *
 
 from PyQt5.QtWidgets import * #QApplication, QMainWindow, QMessageBox, QPushButton, QLabel, QLineEdit, QWidget, QVBoxLayout
 from PyQt5.QtGui import * #QPalette, QColor
+
 class LoginApp(QMainWindow):
     def __init__(self):
         super().__init__()
