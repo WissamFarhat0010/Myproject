@@ -1,6 +1,7 @@
+
 import sys
 from PyQt5.QtWidgets import QApplication
-from controller import FocusMindApp
+#from controller import FocusMindApp
 
 if __name__ == '__main__':
     try:
@@ -10,4 +11,3 @@ if __name__ == '__main__':
         sys.exit(app.exec_())
     except Exception as e:
         print(f"Application error: {e}")
-        
