@@ -192,11 +192,18 @@ class SignupApp(QMainWindow):
 
         conn = sqlite3.connect("users.db")
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO users (username, password, email, full_name) VALUES (?, ?, ?, ?)", (username, password, email, full_name))
-        conn.commit()
-        conn.close()
 
-        QMessageBox.information(self, "Sign Up", "User registered successfully!")
+        try:
+            cursor.execute("INSERT INTO users (username, password, email, full_name) VALUES (?, ?, ?, ?)", (username, password, email, full_name))
+            conn.commit()
+            QMessageBox.information(self, "Sign Up", "User registered successfully!")
+
+        except sqlite3.IntegrityError:
+            QMessageBox.warning(self, "Sign Up", "User already exist. Please choose another.")
+
+        finally:
+            conn.close()
+        
         self.close()
 
 
