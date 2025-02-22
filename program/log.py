@@ -72,39 +72,46 @@ class LoginApp(QMainWindow):
         container.setLayout(layout)
         self.setCentralWidget(container)
 
-def login(self):
-    username = self.input_username.text()
-    password = self.input_password.text()
+    def login(self):
+        username = self.input_username.text()
+        password = self.input_password.text()
 
-    db = firebase.database()
-    user_data = db.child("users").child(username).get().val()
-
-    if user_data:
-        email = user_data['email']  # Retrieve email from username
-        try:
-            auth.sign_in_with_email_and_password(email, password)
-            QMessageBox.information(self, "Login Success", "Welcome!")
-        except:
-            QMessageBox.warning(self, "Login Failed", "Invalid username or password.")
-    else:
-        QMessageBox.warning(self, "Login Failed", "Username not found.")
-
-def signup(self):
-    username = self.input_username.text()
-    password = self.input_password.text()
-    email = self.input_email.text()
-
-    try:
-        user = auth.create_user_with_email_and_password(email, password)
-        uid = user['localId']
-
-        # Store username in Firebase Realtime Database
         db = firebase.database()
-        db.child("users").child(username).set({"email": email, "uid": uid})
+        user_data = db.child("users").child(username).get().val()
 
-        QMessageBox.information(self, "Sign Up Success", "Account created successfully!")
-    except:
-        QMessageBox.warning(self, "Sign Up Failed", "Could not create account.")
+        if user_data:
+            email = user_data['email']  # Retrieve email from username
+            try:
+                auth.sign_in_with_email_and_password(email, password)
+                QMessageBox.information(self, "Login Success", "Welcome!")
+            except:
+                QMessageBox.warning(self, "Login Failed", "Invalid username or password.")
+        else:
+            QMessageBox.warning(self, "Login Failed", "Username not found.")
+
+    def signup(self):
+        username = self.input_email.text() # username/email 
+        password = self.input_password.text()
+        email = self.input_email.text()
+
+        try:
+            user = auth.create_user_with_email_and_password(email, password)
+            uid = user['localId']
+
+            # Store username in Firebase Realtime Database
+            db = firebase.database()
+            db.child("users").child(username).set({"email": email, "uid": uid})
+
+            QMessageBox.information(self, "Sign Up Success", "Account created successfully!")
+        except:
+            QMessageBox.warning(self, "Sign Up Failed", "Could not create account.")
+
+    
+
+
+     
+
+
 
     def reset_password(self):
         email = self.input_email.text()
