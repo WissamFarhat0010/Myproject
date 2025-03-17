@@ -6,6 +6,7 @@ from PyQt5.QtCore import *
 
 from PyQt5.QtWidgets import * #QApplication, QMainWindow, QMessageBox, QPushButton, QLabel, QLineEdit, QWidget, QVBoxLayout
 from PyQt5.QtGui import * #QPalette, QColor
+from breathing_timer import BreathingApp  
 
 class LoginApp(QMainWindow):
     def __init__(self):
@@ -14,13 +15,19 @@ class LoginApp(QMainWindow):
         self.create_database()
 
     def initUI(self):
-        self.setWindowTitle("Login System")
-        self.setGeometry(100, 100, 300, 200)
+        #self.setGeometry(100, 100, 300, 200)
+        self.setFixedSize(400, 500)  
 
         palette = self.palette()
         palette.setColor(QPalette.Window, QColor(0,128,0))
         self.setPalette(palette)
         layout = QVBoxLayout()
+
+            
+        self.label_title = QLabel("🌿 Focus mind App 🌿")#
+        self.label_title.setAlignment(Qt.AlignCenter)#
+        self.label_title.setStyleSheet("font-size: 26px; font-weight: bold; color: white; margin-bottom: 10px;")#
+        layout.addWidget(self.label_title)#
         
         self.label_username = QLabel("Username:")
         layout.addWidget(self.label_username)
@@ -82,6 +89,7 @@ class LoginApp(QMainWindow):
             #Feelings page (Emojies) will be open here
             self.feelings = FeelApp()
             self.feelings.show()
+            self.close()
         else:
             QMessageBox.warning(self, "Login Failed", "Invalid username or password.")
 
@@ -102,7 +110,8 @@ class PasswordResetApp(QMainWindow):
 
     def initUI(self):
         self.setWindowTitle("Reset Password")
-        self.setGeometry(150, 150, 300, 200)
+        #self.setGeometry(150, 150, 300, 200) 
+        self.setFixedSize(400, 500)  
 
         palette = self.palette()
         palette.setColor(QPalette.Window, QColor(144, 238, 144))
@@ -151,7 +160,8 @@ class SignupApp(QMainWindow):
 
     def initUI(self):
         self.setWindowTitle("Sign Up")
-        self.setGeometry(150, 150, 300, 200)
+        #self.setGeometry(150, 150, 300, 200) 
+        self.setFixedSize(400, 500)  
 
         layout = QVBoxLayout()
 
@@ -231,18 +241,20 @@ class FeelApp(QMainWindow):
 
         print(f"Loading UI from: {ui_file}")  # Debugging print statement
         uic.loadUi(ui_file, self)
+        self.btn_breathing_time=self.findChild(QPushButton,"btn_breathing_time")
+        self.btn_breathing_time.clicked.connect(self.open_breathing_timer)
 
-    
 
 
         # Initialize UI and set up style
         #self.initUI()
         self.create_database()
 
+        #D8BFD8; ل #A7D7A9;
         self.setStyleSheet("""
     
             QMainWindow {
-                background-color: #D8BFD8; /* Light gray background */
+                background-color: #A7D7A9; /* Light gray background */
                 background-repeat: repeat;
                 background-position: center;
             }
@@ -278,8 +290,14 @@ class FeelApp(QMainWindow):
             "Stressed": "5-minute meditation: Close your eyes and focus on your breath."
         }
 
+
         # Start at the emotion selection page
         self.stackedWidget.setCurrentIndex(0)
+          # open_breathing_timer
+    def open_breathing_timer(self):
+        self.breathing_window = BreathingApp()
+        self.breathing_window.show()
+        self.close()
 
     def setup_connections(self):
         """Connect buttons to the corresponding functions."""
@@ -344,6 +362,23 @@ class FeelApp(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+
+     
+    app.setStyleSheet("""
+        QMainWindow {
+            background-color: #8DBBA8; /* لون أخضر فاتح ولطيف */
+        }
+        QPushButton {
+            background-color: #5A9B7B; /* لون أخضر غامق للأزرار */
+            color: #333333;
+            font-weight: bold;
+            border-radius: 5px;
+            padding: 5px;
+        }
+    """)
+
     window = LoginApp()
+    window.setFixedSize(400, 500)  
+
     window.show()
     sys.exit(app.exec_())
